@@ -40,6 +40,7 @@ In a second terminal:
 ```powershell
 cd frontend
 npm install
+$env:NEXT_PUBLIC_API_URL = "http://localhost:8000"
 npm run dev
 ```
 
@@ -58,6 +59,14 @@ Invoke-RestMethod http://localhost:8000/api/chat -Method Post -Headers @{Authori
 ```
 
 This live request incurs whatever usage charges your provider applies; the automated tests use a mocked provider and do not make paid calls.
+
+## Deploy to Vercel
+
+The root `vercel.json` defines two services: `backend` (FastAPI) and `frontend` (Next.js). Public requests under `/api/` are routed to the backend; all other paths go to the frontend. The browser uses same-origin `/api/...` URLs by default, so the deployed frontend does not need a hardcoded backend hostname. `NEXT_PUBLIC_API_URL` is only needed when running the frontend separately with `next dev`; leave it unset on Vercel.
+
+Configure these environment variables for the backend service in Vercel: `DATABASE_URL`, `JWT_SECRET`, `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, and, if needed, `CORS_ORIGINS`. Never put provider credentials in `NEXT_PUBLIC_*` variables. Use a persistent external database for deployment; SQLite on serverless storage is not durable or shared between function instances.
+
+This configuration is deployment routing scaffolding, not a claim that every feature is serverless-ready. The backend currently starts its MCP server as a local stdio subprocess at a path outside the backend service root. That process and sibling `mcp_servers/` directory are not configured as a separate Vercel service or binding; verify or adapt MCP hosting before relying on MCP endpoints after deployment.
 
 ## MCP tools
 

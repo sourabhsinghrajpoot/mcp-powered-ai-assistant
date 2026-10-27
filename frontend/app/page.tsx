@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API = process.env.NEXT_PUBLIC_API_URL || '';
 type Message = { role: 'user' | 'assistant'; content: string };
 type ConversationSummary = { id: number; title: string };
 
