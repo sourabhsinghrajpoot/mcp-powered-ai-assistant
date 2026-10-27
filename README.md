@@ -4,7 +4,7 @@ A modular starter application with a FastAPI backend, Next.js chat UI, persisten
 
 ## Current scope
 
-Working foundations: email/password registration and login with Argon2 password hashing and JWTs; per-user conversation and document ownership; SQLite development persistence; PDF, DOCX, Markdown, and TXT text extraction; basic in-document keyword search; OpenAI-compatible LLM chat; and MCP `get_current_time` and `calculate` tools. The chat UI loads the most recent conversation, sends messages to the backend, and displays provider errors rather than inventing model responses. Register accounts with the documented API. Integrations such as GitHub, hosted web search, custom APIs, database natural-language queries, migrations, audit UI, and OAuth are not implemented in this starter and must not be considered enabled.
+Working foundations: email/password registration and login with Argon2 password hashing and JWTs; per-user conversation and document ownership; SQLite development persistence; PDF, DOCX, Markdown, and TXT text extraction; basic in-document keyword search; OpenAI-compatible LLM chat; and MCP `get_current_time` and `calculate` tools. The chat UI loads the most recent conversation, sends messages to the backend, and displays provider errors rather than inventing model responses. Users can register or sign in from the chat page. Integrations such as GitHub, hosted web search, custom APIs, database natural-language queries, migrations, audit UI, and OAuth are not implemented in this starter and must not be considered enabled.
 
 ## Requirements
 
@@ -44,7 +44,7 @@ $env:NEXT_PUBLIC_API_URL = "http://localhost:8000"
 npm run dev
 ```
 
-Open http://localhost:3000. Register the first user (OAuth2 form encoding):
+Open http://localhost:3000 and choose **Create an account** below the sign-in form. Registration creates the account and signs you in. For API-based registration, use OAuth2 form encoding:
 
 ```powershell
 Invoke-RestMethod http://localhost:8000/api/auth/register -Method Post -ContentType 'application/x-www-form-urlencoded' -Body @{username='you@example.com';password='choose-a-long-password'}

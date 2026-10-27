@@ -17,6 +17,7 @@ async function readResponse<T>(response: Response): Promise<T> {
 
 export default function Home() {
   const [token, setToken] = useState('');
+  const [isSigningUp, setIsSigningUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -64,12 +65,12 @@ export default function Home() {
     return readResponse<T>(await fetch(`${API}${path}`, { ...init, headers }));
   }
 
-  async function login(event: FormEvent<HTMLFormElement>) {
+  async function authenticate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
     try {
       const body = new URLSearchParams({ username: email, password });
-      const response = await fetch(`${API}/api/auth/login`, {
+      const response = await fetch(`${API}/api/auth/${isSigningUp ? 'register' : 'login'}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body,
@@ -78,7 +79,7 @@ export default function Home() {
       localStorage.setItem('token', data.access_token);
       setToken(data.access_token);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Sign in failed.');
+      setError(cause instanceof Error ? cause.message : isSigningUp ? 'Account creation failed.' : 'Sign in failed.');
     }
   }
 
@@ -134,14 +135,22 @@ export default function Home() {
   if (!token) {
     return (
       <main className="login">
-        <form onSubmit={login}>
+        <form onSubmit={authenticate}>
           <div className="mark">✳</div>
-          <h1>Welcome back</h1>
-          <p>Sign in to your assistant workspace.</p>
+          <h1>{isSigningUp ? 'Create your account' : 'Welcome back'}</h1>
+          <p>{isSigningUp ? 'Sign up to start using your assistant workspace.' : 'Sign in to your assistant workspace.'}</p>
           <label>Email<input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-          <label>Password<input type="password" required value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-          <button>Sign in</button>
-          <small>New here? Create an account with POST /api/auth/register (OAuth form fields: username, password).</small>
+          <label>Password<input type="password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+          <button type="submit">{isSigningUp ? 'Sign up' : 'Sign in'}</button>
+          <p className="auth-toggle">
+            {isSigningUp ? 'Already have an account?' : 'New here?'}{' '}
+            <button type="button" onClick={() => {
+              setIsSigningUp((current) => !current);
+              setError('');
+            }}>
+              {isSigningUp ? 'Sign in' : 'Create an account'}
+            </button>
+          </p>
           {error && <p className="error">{error}</p>}
         </form>
       </main>
